@@ -32,21 +32,20 @@ public class ProductController {
 
     @GetMapping
     public ResponseEntity<?> getAllProducts() {
-//        if(productService.isEmpty()) {
-//            return new ResponseEntity<>("DB is empty", HttpStatus.NOT_FOUND);
-//        }
-//        try{
+        if(productService.isEmpty()) {
+          return new ResponseEntity<>("DB is empty", HttpStatus.NOT_FOUND);
+        }
+        try{
             productService.getAllProducts();
-            System.out.println("QUI");
             return new ResponseEntity<>(HttpStatus.OK);
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-//        }
+        } catch (Exception e) {
+           e.printStackTrace();
+           return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @DeleteMapping (path = "{id}")
-    public ResponseEntity<?> deleteProduct(@PathVariable("id") long id) {
+    public ResponseEntity<?> deleteProduct(@PathVariable("id") @RequestParam long id) {
         try{
             if (productService.getProductById(id).isPresent()) {
                 productService.deleteProduct(id);
@@ -60,8 +59,8 @@ public class ProductController {
         }
     }
 
-    @PostMapping(path = "/updatePrice/{id}")
-    public ResponseEntity<?> updatePrice(@PathVariable("id") long id, double price) {
+    @PostMapping(path = "/updatePrice/}")
+    public ResponseEntity<?> updatePrice(@RequestParam("id") long id, @RequestParam("price") double price) {
         try {
             productService.updatePrice(id, price);
             return new ResponseEntity<>("Product is updated", HttpStatus.OK);
@@ -71,8 +70,8 @@ public class ProductController {
         }
     }
 
-    @GetMapping (path = "/getProduct/{id}")
-    public ResponseEntity<Product> getProductById(@PathVariable("id") int id) {
+    @GetMapping (path = "/getProduct/")
+    public ResponseEntity<Product> getProductById(@RequestParam("id") int id) {
         try {
             Optional<Product> p = productService.getProductById(id);
             if (p.isEmpty()) {
@@ -86,12 +85,12 @@ public class ProductController {
         }
     }
 
-    @GetMapping(path = "/getAuthor/{author}")
+    @GetMapping(path = "/getAuthor/")
     public ResponseEntity<?> getProductByAuthor(@RequestParam("author") String author) {
         try {
             List<Product> books =  productService.getProductsByAuthor(author);
             if( books.isEmpty()) {
-                return  new ResponseEntity<>(HttpStatus.NOT_FOUND);
+                return  new ResponseEntity<>("This author doens't exist", HttpStatus.NOT_FOUND);
             } else {
                 return new ResponseEntity<>(books, HttpStatus.OK);
             }
@@ -99,9 +98,7 @@ public class ProductController {
             e.printStackTrace();
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
-
     }
-
 
 }
 
