@@ -1,0 +1,40 @@
+
+{
+    "id": 1,
+    "title": "Uno, Nessuno e Centomila",
+    "author": "Pirandello",
+    "price": 12.50, 
+    "type": "novel"
+}
+
+{
+    "id": 2,
+    "title": "Il Signore degli Anelli",
+    "author": "Tolkien",
+    "price": 20.99, 
+    "type": "novel"
+}
+
+{
+    "id": 3,
+    "title": "Slam Dunk",
+    "author": "Takehiko Inoue",
+    "price": 6.50, 
+    "type": "manga"
+}
+
+{
+    "id": 4,
+    "title": "Death Note",
+    "author": "Tsugumi Oba",
+    "price": 12, 
+    "type": "manga"
+}
+
+{
+    "id": 5,
+    "title": "Game of Thrones",
+    "author": "George R.R Martin",
+    "price": 22.50, 
+    "type": "novel"
+}

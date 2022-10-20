@@ -32,13 +32,10 @@ public class ProductService implements ProductManagmentService {
     }
 
     @Override
-    public void updatePrice(long id, Product product) {
-        List<Product> products = productRepository.findAll().stream()
+    public void updatePrice(long id, double price) {
+        productRepository.findAll().stream()
                 .filter(p -> p.getId() == id)
-                .collect(Collectors.toList());
-        while(products.listIterator().hasNext()) {
-            products.listIterator().next().setPrice(product.getPrice());
-        }
+                .peek(p -> p.setPrice(price));
     }
 
     @Override
@@ -57,4 +54,5 @@ public class ProductService implements ProductManagmentService {
     public boolean isEmpty() {
         return productRepository.findAll().isEmpty();
     }
+
 }

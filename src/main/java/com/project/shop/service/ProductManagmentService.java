@@ -14,7 +14,7 @@ public interface ProductManagmentService {
 
     void deleteProduct(long id);
 
-    void updatePrice(long id, Product product);
+    void updatePrice(long id, double price);
 
     Optional<Product> getProductById(long id);
 

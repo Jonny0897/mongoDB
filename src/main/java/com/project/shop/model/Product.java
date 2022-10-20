@@ -11,7 +11,7 @@ public class Product {
     private final long id;
     private final String title;
     private final String author;
-    private double price;
+    private Double price;
     private final String type;
 
     private static long idT = 100;
@@ -36,7 +36,7 @@ public class Product {
         return author;
     }
 
-    public double getPrice() {
+    public Double getPrice() {
         return price;
     }
 

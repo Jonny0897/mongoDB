@@ -30,22 +30,23 @@ public class ProductController {
         }
     }
 
-    @GetMapping(path = "/allProduct")
+    @GetMapping
     public ResponseEntity<?> getAllProducts() {
-        if(productService.isEmpty()) {
-            return new ResponseEntity<>("DB is empty", HttpStatus.NOT_FOUND);
-        }
-        try{
+//        if(productService.isEmpty()) {
+//            return new ResponseEntity<>("DB is empty", HttpStatus.NOT_FOUND);
+//        }
+//        try{
             productService.getAllProducts();
+            System.out.println("QUI");
             return new ResponseEntity<>(HttpStatus.OK);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+//        }
     }
 
     @DeleteMapping (path = "{id}")
-    public ResponseEntity<?> deleteProduct(long id) {
+    public ResponseEntity<?> deleteProduct(@PathVariable("id") long id) {
         try{
             if (productService.getProductById(id).isPresent()) {
                 productService.deleteProduct(id);
@@ -59,10 +60,10 @@ public class ProductController {
         }
     }
 
-    @GetMapping(path = "{id}")
-    public ResponseEntity<?> updatePrice(@PathVariable("id") long id, Product p) {
+    @PostMapping(path = "/updatePrice/{id}")
+    public ResponseEntity<?> updatePrice(@PathVariable("id") long id, double price) {
         try {
-            productService.updatePrice(id, p);
+            productService.updatePrice(id, price);
             return new ResponseEntity<>("Product is updated", HttpStatus.OK);
         } catch (Exception e) {
             e.printStackTrace();
@@ -85,8 +86,8 @@ public class ProductController {
         }
     }
 
-    @GetMapping(path = "/getAuthor/{id}")
-    public ResponseEntity<List<Product>> getProductByAuthor(@PathVariable("author") String author) {
+    @GetMapping(path = "/getAuthor/{author}")
+    public ResponseEntity<?> getProductByAuthor(@RequestParam("author") String author) {
         try {
             List<Product> books =  productService.getProductsByAuthor(author);
             if( books.isEmpty()) {
