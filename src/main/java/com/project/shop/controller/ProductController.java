@@ -1,6 +1,8 @@
 package com.project.shop.controller;
 
 
+import com.project.shop.converter.ProductConverter;
+import com.project.shop.dto.ProductDTO;
 import com.project.shop.model.Product;
 import com.project.shop.service.ProductManagmentService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,9 +10,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/product")
@@ -19,10 +20,13 @@ public class ProductController {
     @Autowired
     private ProductManagmentService productService;
 
+    @Autowired
+    private ProductConverter converter;
+
     @PostMapping
-    public ResponseEntity<?> addProduct(@RequestBody Product product) {
+    public ResponseEntity<?> addProduct(@RequestBody ProductDTO productDTO) {
         try {
-            productService.addProduct(product);
+            productService.addProduct(converter.mapToEntity(productDTO));
             return new ResponseEntity<>("Product added", HttpStatus.OK);
         } catch (Exception e) {
             e.printStackTrace();
@@ -32,22 +36,22 @@ public class ProductController {
 
     @GetMapping
     public ResponseEntity<?> getAllProducts() {
-        if(productService.isEmpty()) {
-          return new ResponseEntity<>("DB is empty", HttpStatus.NOT_FOUND);
+        if (productService.isEmpty()) {
+            return new ResponseEntity<>("DB is empty", HttpStatus.NOT_FOUND);
         }
-        try{
-            productService.getAllProducts();
+        try {
+            productService.getAllProducts().stream().map(product -> converter.mapToDTO(product)).collect(Collectors.toList());
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (Exception e) {
-           e.printStackTrace();
-           return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
-    @DeleteMapping (path = "{id}")
+    @DeleteMapping(path = "{id}")
     public ResponseEntity<?> deleteProduct(@PathVariable("id") @RequestParam long id) {
-        try{
-            if (productService.getProductById(id).isPresent()) {
+        try {
+            if (productService.isPresent(id)) {
                 productService.deleteProduct(id);
                 return new ResponseEntity<>("Product is deleted", HttpStatus.OK);
             } else {
@@ -70,16 +74,13 @@ public class ProductController {
         }
     }
 
-    @GetMapping (path = "/getProduct/")
-    public ResponseEntity<Product> getProductById(@RequestParam("id") int id) {
+    @GetMapping(path = "/getProduct/")
+    public ResponseEntity<Product> getProductById(@RequestParam("id") Long id) {
         try {
-            Optional<Product> p = productService.getProductById(id);
-            if (p.isEmpty()) {
-                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-            } else {
-                return new ResponseEntity<>(p.get(), HttpStatus.OK);
-            }
-        }catch (Exception e) {
+            Product p = productService.getProductById(id);
+            converter.mapToDTO(p);
+            return new ResponseEntity<>(p, HttpStatus.OK);
+        } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -88,13 +89,14 @@ public class ProductController {
     @GetMapping(path = "/getAuthor/")
     public ResponseEntity<?> getProductByAuthor(@RequestParam("author") String author) {
         try {
-            List<Product> books =  productService.getProductsByAuthor(author);
-            if( books.isEmpty()) {
-                return  new ResponseEntity<>("This author doens't exist", HttpStatus.NOT_FOUND);
+            List<Product> books = productService.getProductsByAuthor(author);
+            if (books.isEmpty()) {
+                return new ResponseEntity<>("This author doesn't exist", HttpStatus.NOT_FOUND);
             } else {
+                books.stream().map(p -> converter.mapToDTO(p)).collect(Collectors.toList());
                 return new ResponseEntity<>(books, HttpStatus.OK);
             }
-        } catch( Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }

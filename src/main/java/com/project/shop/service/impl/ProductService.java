@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -27,20 +26,20 @@ public class ProductService implements ProductManagmentService {
     }
 
     @Override
-    public void deleteProduct(long id) {
+    public void deleteProduct(Long id) {
         productRepository.deleteById(id);
     }
 
     @Override
-    public void updatePrice(long id, double price) {
-        productRepository.findAll().stream()
-                .filter(p -> p.getId() == id)
-                .peek(p -> p.setPrice(price));
+    public void updatePrice(Long id, double price) {
+        Product pr = productRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Product Not Found on:" +id));
+        pr.setPrice(price);
+        productRepository.save(pr);
     }
 
     @Override
-    public Optional<Product> getProductById(long id) {
-        return productRepository.findById(id);
+    public Product getProductById(Long id) {
+        return productRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Product Not Found on:" + id));
     }
 
     @Override
@@ -55,4 +54,8 @@ public class ProductService implements ProductManagmentService {
         return productRepository.findAll().isEmpty();
     }
 
+    @Override
+    public boolean isPresent(Long id) {
+        return productRepository.findById(id).isPresent();
+    }
 }

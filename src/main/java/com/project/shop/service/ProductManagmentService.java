@@ -3,8 +3,6 @@ package com.project.shop.service;
 import com.project.shop.model.Product;
 
 import java.util.List;
-import java.util.Optional;
-import java.util.concurrent.ExecutionException;
 
 public interface ProductManagmentService {
 
@@ -12,14 +10,16 @@ public interface ProductManagmentService {
 
     List<Product> getAllProducts();
 
-    void deleteProduct(long id);
+    void deleteProduct(Long id);
 
-    void updatePrice(long id, double price);
+    void updatePrice(Long id,double price);
 
-    Optional<Product> getProductById(long id);
+    Product getProductById(Long id);
 
     List<Product> getProductsByAuthor(String author);
 
     boolean isEmpty();
+
+    boolean isPresent(Long id);
 
 }
